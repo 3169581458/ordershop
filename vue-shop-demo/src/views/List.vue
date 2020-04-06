@@ -1,33 +1,67 @@
 <template>
-	<div class="view"> 
-		<el-input class="input" v-moled="name_input" placeholder="请输入商品名称"></el-input>
-		<el-input class="input" v-moled="price_input" type="number" placeholder="请输入商品价格"></el-input>
-		<el-input class="input" v-moled="number_input" type="number" placeholder="请输入商品数量"></el-input>
-		<el-button class="button" type="success" round>提交订单</el-button>
+	<div>
+		<el-form style="width: 50%;" :model="ruleForm" status-icon :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
+			<el-form-item label="商品名称" prop="goods_name">
+				<el-input v-model="ruleForm.goods_name" autocomplete="off"></el-input>
+			</el-form-item>
+			<el-form-item label="商品价格" prop="goods_price">
+				<el-input  v-model="ruleForm.goods_price" autocomplete="off"></el-input>
+			</el-form-item>
+			<el-form-item label="商品数量" prop="goods_num">
+				<el-input v-model="ruleForm.goods_num"></el-input>
+			</el-form-item>
+			<el-form-item>
+				<el-button type="primary" @click="submitForm('ruleForm')">提交</el-button>
+				<el-button @click="resetForm('ruleForm')">重置</el-button>
+			</el-form-item>
+		</el-form>
 	</div>
 </template>
-
 <script>
 	export default {
-	  data() {
-	    return {
-	      name_input: '',
-		  price_input:'',
-		  number_input:''
+	    data() {
+	        return {
+	            ruleForm: {
+	                goods_name:'',
+	                goods_price:'',
+	                goods_num:''
+	            },
+	            rules: {
+	                goods_name: [
+	                   //定义规则（校验） 必填项 提示信息 触发事件
+	                    { required: true, message: '请输入商品名称', trigger: 'goods_name' }
+	                ],
+	                goods_price: [
+	                    { required: true, message: '请输入商品价格', trigger: 'goods_price' }
+	                ],
+	                goods_num: [
+	                    { required: true, message: '请输入商品数量', trigger: 'goods_num'  }
+	                ]
+	            }
+	        };
+	    },
+	    methods: {
+	        //提交
+	        submitForm(formName) {
+	            //_this表示当前vue对象
+	            const _this=this;
+	            this.$refs[formName].validate((valid) => {
+	                if (valid) {
+						this.$axios.post('http://localhost:8889/orderlist/save', this.ruleForm).then(resp => {
+								if(resp.data == 'success'){
+									alert('添加成功')
+									_this.$router.push('/About')
+								}
+							})
+	                } else {
+	                    return false;
+	                }
+	            });
+	        },
+	        //重置
+	        resetForm(formName) {
+	            this.$refs[formName].resetFields();
+	        }
 	    }
-	  }
 	}
 </script>
-
-<style>
-	.input{
-		margin-top: 30px;
-		font-size: 30px;
-		
-	}
-	.button{
-		margin-top: 50px;
-		float: right;
-		margin-right: 50px;
-	}
-</style>

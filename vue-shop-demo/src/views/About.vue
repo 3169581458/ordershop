@@ -6,24 +6,19 @@
 			</el-input>
 		</div>
 		<el-table :data="tableData" stripe style="width: 100%">
-			<el-table-column prop="goods_name" label="商品名称" width="180" align='center'>
-			</el-table-column>
+			<el-table-column prop="goods_id" label="订单编号" width="180" align='center'></el-table-column>
+			
+			<el-table-column prop="goods_name" label="商品名称" width="180" align='center'></el-table-column>
 
-			<el-table-column prop="goods_price" label="价格" width="180" align='center'>
-			</el-table-column>
+			<el-table-column prop="goods_price" label="价格" width="180" align='center'></el-table-column>
 
-			<el-table-column prop="goods_num" label="数量" width="180" align='center'>
-<!-- 				<template slot-scope="scope1">
-					<el-input-number v-model="num" controls-position="right" @change="numberchange" :min="1" :max="10"></el-input-number>
-				</template> -->
-			</el-table-column>
+			<el-table-column prop="goods_num" label="数量" width="180" align='center'></el-table-column>
 
 			<el-table-column label="操作" align="center">
-				
+
 				<template slot-scope="scope">
-					<el-button icon="el-icon-remove-outline" cirle></el-button>
-					<el-button icon="el-icon-circle-plus-outline" cirle></el-button>
-					<el-button icon="el-icon-delete" @click="handleDelete(scope.$index,scope.row)"></el-button>
+					<el-button icon="el-icon-edit" @click="edit(scope.row)"></el-button>
+					<el-button icon="el-icon-delete" @click="del(scope.row)"></el-button>
 				</template>
 			</el-table-column>
 		</el-table>
@@ -52,209 +47,47 @@
 		data() {
 			return {
 				tableData: [{
-						goods_name: '苹果',
-						goods_price: '5',
-						goods_num: '7'
-					}
-				],
+					goods_name: '苹果',
+					goods_price: '5',
+					goods_num: '7'
+				}],
 				drawer: false,
 				direction: 'btt',
-				
+
 			}
 		},
 		methods: {
-			handleDelete(index, row) {
-				console.log(index, row);
+			del(row){
+			    const _this1=this;
+			    this.axios.delete('http://localhost:8889/orderlist/deleteById/'+row.id).then(resp=> {
+			            _this1.$alert('商品删除成功！', '消息', {
+			                confirmButtonText: '确定',
+			                callback: action => {
+			                //   动态刷新
+			                    window.location.reload()
+			                }
+			            });
+			    })
 			},
-			numberChange(value) {
-				console.log(value);
-			}
+			edit(row) {
+				alert(row.id)
+			    this.$router.push({
+			        path:'/update',
+			        query:{
+			            id:row.id
+			        }
+			    })
+			    // row.id
+			},
 		},
-		created(){
-			const _this=this
-			        this.$axios.get('http://localhost:8889/orderlist/findAll',{
-			           
-			          })
-			          .then(resp => {
-			            _this.tableData=resp.data
-			          }).catch(err => {
-			            console.log(err);
-			          })
-					  
+		//访问后端数据
+		created() {
+			const _this = this
+			this.$axios.get('http://localhost:8889/orderlist/findAll')
+				.then(resp => {
+					_this.tableData = resp.data
+				})
+
 		}
 	}
 </script>
-
-
-
-
-
-<!-- <template>
-    <div>
-        <el-table
-            :data="tableDates"
-            size="small"
-            border
-            empty-text="暂无数据"
-            style="width: 100%">
-            <el-table-column
-                prop="itemCode"
-                label="物料编码"
-                show-overflow-tooltip
-                width="auto"
-                align="center">
-                    <template slot-scope="scope">
-                    <el-input
-                        v-model="scope.row.itemCode"
-                        type="text"
-                        placeholder="物料名称"
-                    ></el-input>
-                </template>
-            </el-table-column>
-            <el-table-column
-                prop="itemName"
-                label="物料名称"
-                width="auto"
-                align="center">
-                <template slot-scope="scope">
-                    <el-input
-                        v-model="scope.row.itemName"
-                        type="text"
-                        placeholder="物料名称"
-                    ></el-input>
-                </template>
-            </el-table-column>
-            <el-table-column
-                prop="norms"
-                label="型号"
-                width="auto"
-                align="center">
-                <template slot-scope="scope">
-                    <el-input
-                        v-model="scope.row.norms"
-                        type="text"
-                        placeholder="型号"
-                    ></el-input>
-                </template>
-            </el-table-column>
-            <el-table-column
-                prop="unit"
-                label="单位"
-                width="auto"
-                align="center">
-                <template slot-scope="scope">
-                    <el-input
-                        v-model="scope.row.unit"
-                        type="text"
-                        placeholder="单位"
-                    ></el-input>
-                </template>
-            </el-table-column>
-            <el-table-column
-                prop="outSum"
-                label="退料数量"
-                width="auto"
-                align="center">
-                    <template slot-scope="scope">
-                    <el-input
-                        type="number"
-                        v-model="scope.row.outSum"
-                        placeholder="退料数量"
-                    ></el-input>
-                </template>
-            </el-table-column>
-            <el-table-column
-                prop="reason"
-                label="退料原因"
-                show-overflow-tooltip
-                width="auto"
-                align="center">
-                    <template slot-scope="scope">
-                    <el-input
-                        v-model="scope.row.reason"
-                        type="text"
-                        placeholder="退料原因"
-                    ></el-input>
-                </template>
-            </el-table-column>
-            <el-table-column
-                prop="remarks"
-                label="备注"
-                width="auto"
-                align="center">
-                <template slot-scope="scope">
-                    <el-input
-                        v-model="scope.row.remarks"
-                        type="text"
-                        placeholder="备注"
-                    ></el-input>
-                </template>
-            </el-table-column>
-            <el-table-column
-                label="操作"
-                width="160"
-                align="center">
-                <template slot-scope="scope">
-                    <el-button
-                        size="mini"
-                        type="danger"
-                        plain
-                        @click.native="delRow(scope.$index,tableDates)"
-                        title="删除">删除
-                    </el-button>
-                </template>
-            </el-table-column>
-        </el-table>
-        <el-button type="primary"  @click.native="addRow" class="mt-3" size="small" icon="el-icon-plus">新 增</el-button>
-        <el-button type="success"  @click.native="submitForm" class="mt-3" size="small">确 定</el-button>
-    </div>
-</template>
- 
-<script>
- 
-    export default {
-        data() {
-            return {
-               tableDates:[],
-            };
-        },
-		components: {
-		},
-        methods: {
-            //数据的新增
-            addRow(){
-                 let j = {
-                    itemCode: "",
-                    itemName: "",
-                    norms: "",
-                    unit: "",
-                    outSum: "",
-                    reason: "",
-                    remarks: "",
-                    inventoryId:'',
-                };
-                this.tableDates.push(j);
-            },
-            // 数据的删除
-            delRow(index,rows){
-                rows.splice(index, 1)
-            },
-            //保存
-            submitForm() {
-                let _this = this;
-                let data = {
-                    list: _this.tableDates,
-                }
-                console.log(data)
-            },
-        },
-        mounted() {
-           
-        },
-    }
-</script>
- 
-<style lang="scss" scoped>
-</style>
-
- -->
