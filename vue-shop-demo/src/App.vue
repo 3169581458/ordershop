@@ -4,7 +4,7 @@
 			<a class="title">订单商城</a>	
 				<div class="title1 "><router-link  to="/about">结算界面</router-link></div>
 				<div class="title1 " ><router-link  to="/">商品界面</router-link> </div>
-				
+				<div class="title1"><router-link to="/list">自定义添加</router-link></div>
 		</div>
 		<router-view />
 	</div>
